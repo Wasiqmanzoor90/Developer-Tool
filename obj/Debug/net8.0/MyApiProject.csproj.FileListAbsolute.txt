@@ -170,3 +170,7 @@
 /home/wasiq/Documents/Project/Dotnet/Developer Tool/MyApiProject/bin/Debug/net8.0/runtimes/browser/lib/net8.0/System.Text.Encodings.Web.dll
 /home/wasiq/Documents/Project/Dotnet/Developer Tool/MyApiProject/bin/Debug/net8.0/runtimes/win/lib/net6.0/System.Windows.Extensions.dll
 /home/wasiq/Documents/Project/Dotnet/Developer Tool/MyApiProject/bin/Debug/net8.0/ICSharpCode.AvalonEdit.dll
+/home/wasiq/Documents/Project/Dotnet/Developer Tool/MyApiProject/bin/Debug/net8.0/FluentValidation.dll
+/home/wasiq/Documents/Project/Dotnet/Developer Tool/MyApiProject/bin/Debug/net8.0/FluentValidation.AspNetCore.dll
+/home/wasiq/Documents/Project/Dotnet/Developer Tool/MyApiProject/bin/Debug/net8.0/FluentValidation.DependencyInjectionExtensions.dll
+/home/wasiq/Documents/Project/Dotnet/Developer Tool/MyApiProject/obj/Debug/net8.0/MyApiProject.sourcelink.json
