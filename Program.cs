@@ -1,7 +1,21 @@
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using MyApiProject.Context;
+using MyApiProject.Interface;
+using MyApiProject.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    });
+
+
+builder.Services.AddScoped<ICollection, CollectionService>();
+
 
 // Add services to the container
 builder.Services.AddEndpointsApiExplorer();
@@ -35,12 +49,11 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseHttpsRedirection();
-
-
+// Move CORS before HTTPS redirection
 app.UseCors("AllowReactApp");
 
-// Example minimal API endpoint
-app.MapGet("/api/hello", () => new { Message = "Hello from ASP.NET Core!" });
+app.UseHttpsRedirection();
+app.MapControllers();
+
 
 app.Run();
