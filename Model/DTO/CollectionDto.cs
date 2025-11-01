@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using MyApiProject.Model.Entites;
 
-namespace MyApiProject.Model.DTOs
+namespace MyApiProject.Model.DTO
 {
     public class CollectionDto
     {

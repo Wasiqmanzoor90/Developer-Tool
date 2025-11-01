@@ -1,6 +1,7 @@
 
 
-using MyApiProject.Model.DTOs;
+using MyApiProject.Model.DTO;
+
 using MyApiProject.Model.Entites;
 
 namespace MyApiProject.Interface;

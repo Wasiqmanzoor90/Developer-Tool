@@ -2,7 +2,9 @@ using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using MyApiProject.Context;
 using MyApiProject.Interface;
-using MyApiProject.Repositories;
+
+using MyApiProject.Repositories.CollectionService;
+using MyApiProject.Repositories.RequestService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +17,7 @@ builder.Services.AddControllers()
 
 
 builder.Services.AddScoped<ICollection, CollectionService>();
+builder.Services.AddScoped<IRequestInterface, RequestService>();
 
 
 // Add services to the container

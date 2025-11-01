@@ -2,10 +2,10 @@
 using Microsoft.EntityFrameworkCore;
 using MyApiProject.Context;
 using MyApiProject.Interface;
-using MyApiProject.Model.DTOs;
+using MyApiProject.Model.DTO;
 using MyApiProject.Model.Entites;
 
-namespace MyApiProject.Repositories;
+namespace MyApiProject.Repositories.CollectionService;
 
 public class CollectionService(SqlDbContext dbContext) : ICollection
 {
@@ -40,7 +40,9 @@ private readonly SqlDbContext _dbcontext = dbContext;
     {
         try
         {
-            var res = await _dbcontext.Collections.ToListAsync();
+          var res = await _dbcontext.Collections
+            .Include(c => c.Request) 
+            .ToListAsync();
             return res;
 
         }

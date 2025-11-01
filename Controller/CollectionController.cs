@@ -2,7 +2,7 @@
 
 using Microsoft.AspNetCore.Mvc;
 using MyApiProject.Interface;
-using MyApiProject.Model.DTOs;
+using MyApiProject.Model.DTO;
 using MyApiProject.Model.Entites;
 
 namespace MyApiProject.Controller;
