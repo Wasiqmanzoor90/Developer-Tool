@@ -22,6 +22,7 @@ dotnet add package Newtonsoft.Json
 dotnet ef migrations add InitialCreate
 dotnet ef database update
 dotnet ef migrations remove
+//ok
 
 
 
