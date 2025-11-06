@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using System.Net.Http.Headers;
+using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using MyApiProject.Interface;
 using MyApiProject.Model;
@@ -34,23 +36,47 @@ public class ProxyService(HttpClient httpClient, ILogger<ProxyService> logger) :
               ? $"{baseUrl}&{quesryString}"
               : $"{baseUrl}?{quesryString}";
     }
-      // Add headers to request
-      //The AddHeaders method’s job is to add all the headers (like authentication tokens, content type, etc.) from a dictionary to an HTTP request message.
-    private void AddHeaders(HttpRequestMessage requestMessage,  Dictionary<string, string>? headers)
+    // Add headers to request
+    //The AddHeaders method’s job is to add all the headers (like authentication tokens, content type, etc.) from a dictionary to an HTTP request message.
+    private void AddHeaders(HttpRequestMessage requestMessage, Dictionary<string, string>? headers)
     {
         if (headers == null) return;
-        foreach (var header  in headers)
+        foreach (var header in headers)
         {
             try
             {
-              requestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value);  
+                requestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value);
             }
             catch (Exception ex)
             {
-                
-                 _logger.LogWarning(ex, $"Failed to add header: {header.Key}");;
+
+                _logger.LogWarning(ex, $"Failed to add header: {header.Key}"); ;
             }
         }
 
+    }
+    
+    private void AddAuthentication(HttpRequestMessage message,string authType, string? authValue)
+    {
+        if (string.IsNullOrEmpty(authValue)) return;
+        switch(authType.ToLower())
+        {
+         case "bearer":
+                    message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authValue);
+                break;
+                    
+         case "basic":
+                    var bytes = Encoding.UTF8.GetBytes(authValue);
+                    var base64 = Convert.ToBase64String(bytes);
+                    message.Headers.Authorization = new AuthenticationHeaderValue("Basic", base64);
+                break;
+                    
+
+        case "apikey":
+                    // Assuming API key is added as a header (common pattern)
+                    message.Headers.TryAddWithoutValidation("X-API-Key", authValue);
+                    break;
+
+        }
     }
 }
