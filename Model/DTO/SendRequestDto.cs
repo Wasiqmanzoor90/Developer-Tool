@@ -1,3 +1,5 @@
+using MyApiProject.Model.DTO;
+
 namespace MyApiProject.Model
 {
     public class SendRequestDto
@@ -10,5 +12,7 @@ namespace MyApiProject.Model
         public string BodyType { get; set; } = "none"; // json, xml, form, raw, none
         public string AuthType { get; set; } = "none"; // none, bearer, basic, apikey
         public string? AuthValue { get; set; }
+         // Optional: Add response property if you want a unified request/response object
+        public HttpResponseDto? Response { get; set; }
     }
 }

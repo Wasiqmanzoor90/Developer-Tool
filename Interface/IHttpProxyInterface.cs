@@ -6,6 +6,6 @@ namespace MyApiProject.Interface;
 
 public interface IProxyInterface
 {
-    Task<SendRequestDto> SendRequestAsync(SendRequestDto sendRequestDto);
+    Task<HttpResponseDto> SendRequestAsync(SendRequestDto sendRequestDto);
      Task<HttpResponseDto> SendRequestAsync(HttpModel httpModel);
 }

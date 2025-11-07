@@ -4,7 +4,7 @@ namespace MyApiProject.Model.DTO
     {
         public int StatusCode { get; set; }
         public string StatusDescription { get; set; } = string.Empty;
-        public Dictionary<string, string> Headers { get; set; } = new();
+        public Dictionary<string, string> Headers { get; set; } = [];
         public string Body { get; set; } = string.Empty;
         public long ResponseTimeMs { get; set; }
         public long ContentLength { get; set; }

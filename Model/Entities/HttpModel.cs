@@ -45,7 +45,7 @@ public class HttpModel
     [ForeignKey("CollectionId")]
     public Collection? Collection { get; set; }
 
-public List<RequestHistory> RequestHistories { get; set; } = new();
+public List<RequestHistory> RequestHistories { get; set; } = [];
 
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
