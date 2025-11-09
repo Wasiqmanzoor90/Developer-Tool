@@ -8,9 +8,9 @@ namespace MyApiProject.Repositories.RequestService;
 
 public class RequestService(SqlDbContext dbContext) : IRequestInterface
 {
-private readonly SqlDbContext _dbcontext = dbContext;
+    private readonly SqlDbContext _dbcontext = dbContext;
 
-public async Task<HttpModel> CreateAsync(RequestDto requestDto)
+    public async Task<HttpModel> CreateAsync(RequestDto requestDto)
     {
         try
         {
@@ -32,7 +32,7 @@ public async Task<HttpModel> CreateAsync(RequestDto requestDto)
         }
     }
 
-public async Task<bool> DeleteAsync(Guid Id)
+    public async Task<bool> DeleteAsync(Guid Id)
     {
         try
         {
@@ -48,7 +48,7 @@ public async Task<bool> DeleteAsync(Guid Id)
     }
 
 
-public async Task<IEnumerable<HttpModel>> GetAllSync()
+    public async Task<IEnumerable<HttpModel>> GetAllSync()
     {
         try
         {
@@ -61,7 +61,7 @@ public async Task<IEnumerable<HttpModel>> GetAllSync()
         }
     }
 
-public async Task<HttpModel> GetByCollectionId(Guid CollectionId)
+    public async Task<HttpModel> GetByCollectionId(Guid CollectionId)
     {
         try
         {
@@ -74,32 +74,48 @@ public async Task<HttpModel> GetByCollectionId(Guid CollectionId)
         }
     }
 
-public async Task<HttpModel?> UpdateAsync(Guid id, UpdateHttpModelDto request)
+    public async Task<HttpModel?> UpdateAsync(Guid id, UpdateHttpModelDto request)
+    {
+        try
+        {
+            var existing = await _dbcontext.HttpModels.FindAsync(id)
+                ?? throw new KeyNotFoundException($"HttpModel with id '{id}' not found.");
+
+            // Update properties on the tracked entity
+            existing.Name = request.Name;
+            existing.Method = request.Method;
+            existing.Url = request.Url;
+            existing.Headers = request.Headers;
+            existing.QueryParams = request.QueryParams;
+            existing.Body = request.Body;
+            existing.BodyType = request.BodyType;
+            existing.AuthType = request.AuthType;
+            existing.AuthValue = request.AuthValue;
+            existing.UpdatedAt = DateTime.UtcNow;
+
+            await _dbcontext.SaveChangesAsync();
+            return existing;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Internal error: " + ex.Message);
+        }
+    }
+
+public async Task<RequestHistory> CreateRequestHistoryAsync(RequestHistory history)
 {
     try
     {
-        var existing = await _dbcontext.HttpModels.FindAsync(id)
-            ?? throw new KeyNotFoundException($"HttpModel with id '{id}' not found.");
+        if (history == null)
+            throw new ArgumentNullException(nameof(history));
 
-        // Update properties on the tracked entity
-        existing.Name = request.Name;
-        existing.Method = request.Method;
-        existing.Url = request.Url;
-        existing.Headers = request.Headers;
-        existing.QueryParams = request.QueryParams;
-        existing.Body = request.Body;
-        existing.BodyType = request.BodyType;
-        existing.AuthType = request.AuthType;
-        existing.AuthValue = request.AuthValue;
-        existing.UpdatedAt = DateTime.UtcNow;
-
+        _dbcontext.Add(history);
         await _dbcontext.SaveChangesAsync();
-        return existing;
+        return history;
     }
     catch (Exception ex)
     {
-        throw new Exception("Internal error: " + ex.Message);
+        throw new Exception("Internal error: " + ex.Message, ex);
     }
 }
-
 }

@@ -1,8 +1,6 @@
 using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Text;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.IdentityModel.Tokens;
 using MyApiProject.Interface;
 using MyApiProject.Model;
 using MyApiProject.Model.DTO;
@@ -20,7 +18,7 @@ public class ProxyService(HttpClient httpClient, ILogger<ProxyService> logger) :
     public async Task<HttpResponseDto> SendRequestAsync(SendRequestDto sendRequestDto)
     {
 
-         var stopwatch = Stopwatch.StartNew();
+        var stopwatch = Stopwatch.StartNew();
         try
         {
             // Build URI with query parameters
@@ -35,45 +33,61 @@ url
             //Add Headers
             AddHeaders(request, sendRequestDto.Headers);
 
-//add Authentication
+            //add Authentication
             AddAuthentication(request, sendRequestDto.AuthType, sendRequestDto.AuthValue);
- // Add body (for POST, PUT, PATCH)
-                if (!string.IsNullOrEmpty(sendRequestDto.Body) && 
-                    sendRequestDto.Method.ToUpper() != "GET" && 
-                    sendRequestDto.Method.ToUpper() != "DELETE")
-                {
-                    request.Content = CreateContent(sendRequestDto.Body, sendRequestDto.BodyType);
-                }
+            // Add body (for POST, PUT, PATCH)
+            if (!string.IsNullOrEmpty(sendRequestDto.Body) &&
+                sendRequestDto.Method.ToUpper() != "GET" &&
+                sendRequestDto.Method.ToUpper() != "DELETE")
+            {
+                request.Content = CreateContent(sendRequestDto.Body, sendRequestDto.BodyType);
+            }
 
-                // Send the request
-                var response = await _httpClient.SendAsync(request);
-                stopwatch.Stop();
+            // Send the request
+            var response = await _httpClient.SendAsync(request);
+            stopwatch.Stop();
 
-                // Parse response
- return await ParseRespondAsync(response, stopwatch.ElapsedMilliseconds);
+            // Parse response
+            return await ParseRespondAsync(response, stopwatch.ElapsedMilliseconds);
         }
         catch (Exception ex)
         {
-            
-             stopwatch.Stop();
-                _logger.LogError(ex, "Error sending HTTP request");
 
-                return new HttpResponseDto
-                {
-                    StatusCode = 0,
-                    StatusDescription = "Error",
-                    Body = string.Empty,
-                    ResponseTimeMs = stopwatch.ElapsedMilliseconds,
-                    IsSuccess = false,
-                    ErrorMessage = ex.Message
-                };
-            }
+            stopwatch.Stop();
+            _logger.LogError(ex, "Error sending HTTP request");
+
+            return new HttpResponseDto
+            {
+                StatusCode = 0,
+                StatusDescription = "Error",
+                Body = string.Empty,
+                ResponseTimeMs = stopwatch.ElapsedMilliseconds,
+                IsSuccess = false,
+                ErrorMessage = ex.Message
+            };
         }
-    
+    }
 
-    public Task<HttpResponseDto> SendRequestAsync(HttpModel httpModel)
+    //Send request using HttpModel entity
+    public async Task<HttpResponseDto> SendRequestAsync(HttpModel httpModel)
     {
-        throw new NotImplementedException();
+        var RequestDto = new SendRequestDto
+        {
+            Method = httpModel.Method,
+
+            Url = httpModel.Url,
+            Headers = string.IsNullOrEmpty(httpModel.Headers)
+                    ? null
+                    : JsonConvert.DeserializeObject<Dictionary<string, string>>(httpModel.Headers),
+            QueryParams = string.IsNullOrEmpty(httpModel.QueryParams)
+                    ? null
+                    : JsonConvert.DeserializeObject<Dictionary<string, string>>(httpModel.QueryParams),
+            Body = httpModel.Body,
+            BodyType = httpModel.BodyType,
+            AuthType = httpModel.AuthType,
+            AuthValue = httpModel.AuthValue
+        };
+        return await SendRequestAsync(RequestDto);
     }
 
     // Build URI with query parameters
@@ -145,10 +159,10 @@ url
             "raw" or _ => new StringContent(body, Encoding.UTF8, "text/plain")
         };
     }
-        
 
-        //After your HTTP request, this method gives you a summary object (HttpResponseDto) that contains:
-        private async Task<HttpResponseDto>ParseRespondAsync(HttpResponseMessage response ,long elpasedMs)
+
+    //After your HTTP request, this method gives you a summary object (HttpResponseDto) that contains:
+    private async Task<HttpResponseDto> ParseRespondAsync(HttpResponseMessage response, long elpasedMs)
     {
 
         var body = await response.Content.ReadAsStringAsync();
@@ -177,6 +191,6 @@ url
             ErrorMessage = response.IsSuccessStatusCode ? null : response.ReasonPhrase
         };
     }
-    
-        
-    }
+
+
+}
